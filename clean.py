@@ -26,12 +26,20 @@ for line in lines[1:]:
 
     # If the number of fields is incorrect, try to fix it
     if len(fields) != num_columns:
-        # Example fix: Join extra fields or add missing fields
-        while len(fields) > num_columns:
-            fields[-2] = fields[-2] + ',' + fields[-1]
-            fields.pop()
-        while len(fields) < num_columns:
-            fields.append('')
+        # Fix lines with extra delimiters by merging them
+        if len(fields) > num_columns:
+            merged_fields = []
+            i = 0
+            while i < len(fields):
+                if len(merged_fields) < num_columns:
+                    merged_fields.append(fields[i])
+                else:
+                    merged_fields[-1] += ',' + fields[i]
+                i += 1
+            fields = merged_fields
+        # Fix lines with missing fields by adding empty strings
+        elif len(fields) < num_columns:
+            fields += [''] * (num_columns - len(fields))
 
     # Add the cleaned row to the list
     cleaned_rows.append(fields)
